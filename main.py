@@ -74,12 +74,21 @@ def onliner(token, status):
     time.sleep(heartbeat / 1000)
     ws.send(json.dumps(online))
 
+def handle_message(message):
+    message_data = json.loads(message)
+    message_content = message_data.get("d", {}).get("content", "")
+    message_author = message_data.get("d", {}).get("author", {}).get("username", "")
+    if message_content.lower() == "uptime":
+        send_message(f"Hello, {message_author}!")
+
 def run_onliner():
     os.system("clear")
     print(f"Logged in as {username}#{discriminator} ({userid}).")
     while True:
         onliner(usertoken, status)
         time.sleep(30)
+        message = ws.recv()
+        handle_message(message)
 
 keep_alive()
 run_onliner()
